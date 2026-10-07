@@ -1,0 +1,115 @@
+{
+  "version": "1.0.0",
+  "roles": [
+    {
+      "role": "编剧",
+      "skill": "film-screenwriting",
+      "markdown": "01-编剧-Skill.md",
+      "zip": "01-编剧-Skill.zip",
+      "sha256": "02614e82bed97367506d51f1a25ea1734fffcbb40fc6cfe3f2893ac827ea4e5a",
+      "books": [
+        "Story／《故事》",
+        "The Anatomy of Story"
+      ]
+    },
+    {
+      "role": "导演",
+      "skill": "film-directing",
+      "markdown": "02-导演-Skill.md",
+      "zip": "02-导演-Skill.zip",
+      "sha256": "fd8ec59f09c5546279b9259a5f9822348833a6dbadf608c17addfcac575e9f0f",
+      "books": [
+        "Directing: Film Techniques and Aesthetics",
+        "Directing Actors — 25th Anniversary Edition"
+      ]
+    },
+    {
+      "role": "美术指导",
+      "skill": "film-production-design-portable",
+      "markdown": "03-美术指导-Skill.md",
+      "zip": "03-美术指导-Skill.zip",
+      "sha256": "b84f4978d069266958275a838d21c3c7ddaef3cc044ee6ee3d79c2dcfcb8ac27",
+      "books": [
+        "Production Design: Visual Design for Film and Television",
+        "The Art Direction Handbook for Film & Television"
+      ]
+    },
+    {
+      "role": "摄影指导",
+      "skill": "film-cinematography",
+      "markdown": "04-摄影指导-Skill.md",
+      "zip": "04-摄影指导-Skill.zip",
+      "sha256": "858117cfb970072b26bff5e2bee8bd6166d3cb1d9df258948d5da6230be466e7",
+      "books": [
+        "Cinematography: Theory and Practice",
+        "Painting With Light"
+      ]
+    },
+    {
+      "role": "灯光指导",
+      "skill": "film-lighting",
+      "markdown": "05-灯光指导-Skill.md",
+      "zip": "05-灯光指导-Skill.zip",
+      "sha256": "733907d31c3d4863aa2d9590d5eb8fd368108d137d7a13620f22c19011e0cd1a",
+      "books": [
+        "Set Lighting Technician’s Handbook",
+        "Motion Picture and Video Lighting"
+      ]
+    },
+    {
+      "role": "造型指导（妆发）",
+      "skill": "film-makeup-hair",
+      "markdown": "06-造型指导-妆发-Skill.md",
+      "zip": "06-造型指导-妆发-Skill.zip",
+      "sha256": "d99f200540de904da2d0ff7dca7a3cb0f27f592e99fd132c9292565d76482599",
+      "books": [
+        "The Makeup Artist Handbook",
+        "Special Makeup Effects for Stage and Screen"
+      ]
+    },
+    {
+      "role": "动作指导",
+      "skill": "film-action-design",
+      "markdown": "07-动作指导-Skill.md",
+      "zip": "07-动作指导-Skill.zip",
+      "sha256": "ce469b56ad94ac4fb578dbf79c1678faeeb08a352de76ae5982f8098a5a3990b",
+      "books": [
+        "The Screen Combat Handbook: A Practical Guide for Filmmakers",
+        "Fight Choreography: The Art of Non-Verbal Dialogue"
+      ]
+    },
+    {
+      "role": "录音指导",
+      "skill": "film-production-sound",
+      "markdown": "08-录音指导-Skill.md",
+      "zip": "08-录音指导-Skill.zip",
+      "sha256": "2c8744167696999085f9fc7dca37e446233eb5555997a8a43e84005104f166a8",
+      "books": [
+        "The Location Sound Bible",
+        "Audio-Vision: Sound on Screen"
+      ]
+    },
+    {
+      "role": "服装指导",
+      "skill": "film-costume-design",
+      "markdown": "09-服装指导-Skill.md",
+      "zip": "09-服装指导-Skill.zip",
+      "sha256": "73c96198d3f530eb327a7e776979ce292e36916549f9c7c04ab02036d463b8f1",
+      "books": [
+        "Hollywood Costume",
+        "The Art of Ruth E. Carter"
+      ]
+    },
+    {
+      "role": "分镜师",
+      "skill": "film-storyboarding",
+      "markdown": "10-分镜师-Skill.md",
+      "zip": "10-分镜师-Skill.zip",
+      "sha256": "cdcac4d436fb7cab0a802aa95f95503460e966489dd7729edfea62ff787a4c47",
+      "books": [
+        "Film Directing: Shot by Shot",
+        "From Word to Image: Storyboarding and the Filmmaking Process"
+      ]
+    }
+  ]
+}
