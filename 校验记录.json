@@ -1,0 +1,90 @@
+{
+  "role_count": 10,
+  "core_book_count": 20,
+  "results": [
+    {
+      "role": "编剧",
+      "format": "Skill is valid!",
+      "identical_copies": true,
+      "zip_readback": true,
+      "bytes": 9201,
+      "lines": 99
+    },
+    {
+      "role": "导演",
+      "format": "Skill is valid!",
+      "identical_copies": true,
+      "zip_readback": true,
+      "bytes": 9222,
+      "lines": 101
+    },
+    {
+      "role": "美术指导",
+      "format": "Skill is valid!",
+      "identical_copies": true,
+      "zip_readback": true,
+      "bytes": 9305,
+      "lines": 99
+    },
+    {
+      "role": "摄影指导",
+      "format": "Skill is valid!",
+      "identical_copies": true,
+      "zip_readback": true,
+      "bytes": 9043,
+      "lines": 99
+    },
+    {
+      "role": "灯光指导",
+      "format": "Skill is valid!",
+      "identical_copies": true,
+      "zip_readback": true,
+      "bytes": 9025,
+      "lines": 99
+    },
+    {
+      "role": "造型指导（妆发）",
+      "format": "Skill is valid!",
+      "identical_copies": true,
+      "zip_readback": true,
+      "bytes": 9115,
+      "lines": 99
+    },
+    {
+      "role": "动作指导",
+      "format": "Skill is valid!",
+      "identical_copies": true,
+      "zip_readback": true,
+      "bytes": 9346,
+      "lines": 99
+    },
+    {
+      "role": "录音指导",
+      "format": "Skill is valid!",
+      "identical_copies": true,
+      "zip_readback": true,
+      "bytes": 9057,
+      "lines": 99
+    },
+    {
+      "role": "服装指导",
+      "format": "Skill is valid!",
+      "identical_copies": true,
+      "zip_readback": true,
+      "bytes": 9104,
+      "lines": 99
+    },
+    {
+      "role": "分镜师",
+      "format": "Skill is valid!",
+      "identical_copies": true,
+      "zip_readback": true,
+      "bytes": 10842,
+      "lines": 103
+    }
+  ],
+  "bundle_readback": true,
+  "bundle_files": 22,
+  "target_platform_execution": "未执行；只验证技能格式、文件一致性和压缩包回读",
+  "source_depth": "书目／公开简介及部分节选，未通读全部参考书"
+}
