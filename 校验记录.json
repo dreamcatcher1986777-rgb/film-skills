@@ -7,8 +7,8 @@
       "format": "Skill is valid!",
       "identical_copies": true,
       "zip_readback": true,
-      "bytes": 14996,
-      "lines": 159
+      "bytes": 18493,
+      "lines": 188
     },
     {
       "role": "导演",
@@ -111,5 +111,5 @@
   "bundle_files": 29,
   "target_platform_execution": "未执行；只验证技能正文结构、文件一致性和压缩包回读",
   "source_depth": "原十岗为书目／公开简介及部分节选，未通读全部参考书。统筹、道具师、置景师无核心书，只列公开岗位描述入口",
-  "increment": "2026-10-18 新增统筹、道具师、置景师；编剧与美术指导追加硬分界、群审交付、空间类型举一反三。统筹含 R-CONT-FULL 三链"
+  "increment": "2026-10-18 新增统筹、道具师、置景师；编剧与美术指导追加硬分界、群审交付、空间类型举一反三。编剧含硬事实层。统筹含 R-CONT-FULL 三链"
 }
