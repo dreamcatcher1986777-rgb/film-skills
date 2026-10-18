@@ -1,5 +1,5 @@
 {
-  "role_count": 10,
+  "role_count": 13,
   "core_book_count": 20,
   "results": [
     {
@@ -7,8 +7,8 @@
       "format": "Skill is valid!",
       "identical_copies": true,
       "zip_readback": true,
-      "bytes": 9201,
-      "lines": 99
+      "bytes": 14996,
+      "lines": 159
     },
     {
       "role": "导演",
@@ -23,8 +23,8 @@
       "format": "Skill is valid!",
       "identical_copies": true,
       "zip_readback": true,
-      "bytes": 9305,
-      "lines": 99
+      "bytes": 16762,
+      "lines": 175
     },
     {
       "role": "摄影指导",
@@ -81,10 +81,35 @@
       "zip_readback": true,
       "bytes": 10842,
       "lines": 103
+    },
+    {
+      "role": "统筹",
+      "format": "Skill is valid!",
+      "identical_copies": true,
+      "zip_readback": true,
+      "bytes": 15368,
+      "lines": 162
+    },
+    {
+      "role": "道具师",
+      "format": "Skill is valid!",
+      "identical_copies": true,
+      "zip_readback": true,
+      "bytes": 17351,
+      "lines": 200
+    },
+    {
+      "role": "置景师",
+      "format": "Skill is valid!",
+      "identical_copies": true,
+      "zip_readback": true,
+      "bytes": 14000,
+      "lines": 152
     }
   ],
   "bundle_readback": true,
-  "bundle_files": 22,
-  "target_platform_execution": "未执行；只验证技能格式、文件一致性和压缩包回读",
-  "source_depth": "书目／公开简介及部分节选，未通读全部参考书"
+  "bundle_files": 29,
+  "target_platform_execution": "未执行；只验证技能正文结构、文件一致性和压缩包回读",
+  "source_depth": "原十岗为书目／公开简介及部分节选，未通读全部参考书。统筹、道具师、置景师无核心书，只列公开岗位描述入口",
+  "increment": "2026-10-18 新增统筹、道具师、置景师；编剧与美术指导追加硬分界、群审交付、空间类型举一反三。统筹含 R-CONT-FULL 三链"
 }

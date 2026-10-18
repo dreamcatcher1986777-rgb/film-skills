@@ -1,17 +1,24 @@
 from pathlib import Path
 import json
 import hashlib
+import re
 import zipfile
 
 OUT = Path(__file__).resolve().parent
-REVIEW = json.loads((OUT.parent / '岗位参考审阅包-20261003/参考资料.json').read_text())
-REFERENCES = {r['id']: r for r in REVIEW['roles']}
 DEPTS = []
 
-def dept(key, slug, title, description, scope, inputs, steps, deliverables, checks, handoff):
-    DEPTS.append(dict(key=key, slug=slug, title=title, description=description,
-                      scope=scope, inputs=inputs, steps=steps, deliverables=deliverables,
-                      checks=checks, handoff=handoff))
+def dept(key, slug, title, description, scope, inputs, steps, deliverables, checks, handoff, **kwargs):
+    row = dict(key=key, slug=slug, title=title, description=description,
+               scope=scope, inputs=inputs, steps=steps, deliverables=deliverables,
+               checks=checks, handoff=handoff)
+    row.update(kwargs)
+    DEPTS.append(row)
+
+def load_review():
+    path = OUT.parent / '岗位参考审阅包-20261003/参考资料.json'
+    if not path.exists():
+        return None
+    return json.loads(path.read_text(encoding='utf-8'))
 
 COMMON = '''## 通用调用与资料约定
 
@@ -45,8 +52,8 @@ SOURCE_RULE = '''## 参考资料怎样进入本 Skill
 '''
 
 dept('writing', 'film-screenwriting', '编剧',
-     '依据有效剧本分析故事因果、人物目标、场次功能和修订方案；用于编剧分析、结构审阅与局部改稿，原创内容须明确区分。',
-     '负责故事结构、人物行动、对白和信息释放。已有剧本以保留原文为起点；用户明确要求改稿或原创时才产出新正文，并标注修订边界。世界书和人物档案用于核对故事，不把部门设计反向冒充剧本事实。',
+     '依据有效剧本分析故事因果、人物目标、场次功能和修订方案；用于编剧分析、结构审阅与局部改稿，原创内容须明确区分。含国内外创作岗边界、群审交付与空间类型举一反三；不代填置景或道具物账。',
+     '负责故事结构、人物行动、对白和信息释放。已有剧本以保留原文为起点；用户明确要求改稿或原创时才产出新正文，并标注修订边界。世界书和人物档案用于核对故事，不把部门设计反向冒充剧本事实。筹备表群审只核场次意图与人物选择，交付「场号＋问题一句＋建议口径」；空间类型举一反三时只标明示与待考，不代填骨架和陈设细表。',
      '有效剧本／授权脱敏稿、场次目录、时间线、最新世界书与人物档案；如有导演问题、用户指定保留项、类型与篇幅要求，一并读取。原文不全时仅分析已有范围，不推定后续回收。',
      '''1. 建立证据索引：按场记录明确发生的事件、人物进入／离开、关键物件和信息获得。先定位文本，再讨论结构，不能凭故事梗概补出场内细节。
 2. 对关键人物分别梳理“此刻想得到什么—遇到什么阻力—做了什么选择—产生什么后果”。目标与心理解释没有原文支持时标为分析；不要用人物标签代替具体行为。
@@ -60,8 +67,9 @@ dept('writing', 'film-screenwriting', '编剧',
 | 场次／证据定位 | 原文事件 | 人物目标与阻力【分析】 | 选择与后果 | 本场功能【分析】 | 问题／修订选项 | 影响场次 | 核定／采纳状态 |
 |---|---|---|---|---|---|---|---|
 | 沿用源编号 | 只写原文发生的事 | 引据或注明推断 | 事实与推断分开 | 说明具体改变 | 保留原句并另列建议 | 指明范围 | 按记录填写 |''',
-     '逐项核对事件因果与信息时点；未把同场人物推断为亲属或同盟；新增对白和设定有明确标记；未提供的后续剧情保持未知；修订不无意改变已确认结局、人物动机或关键道具。',
-     '交导演的是依据与可比较的叙事选择；交世界书／人物档案的是待采纳修订清单。剧本变更须通知导演及受影响部门，并保留旧定位到新定位的对应关系。')
+     '逐项核对事件因果与信息时点；未把同场人物推断为亲属或同盟；新增对白和设定有明确标记；未提供的后续剧情保持未知；修订不无意改变已确认结局、人物动机或关键道具。未把生活隐含或时代结构写成剧本明示；未代填置景或道具细表；空间类型未缩成只核商船与衙门。',
+     '交导演的是依据与可比较的叙事选择；交世界书／人物档案的是待采纳修订清单。剧本变更须通知导演及受影响部门，并保留旧定位到新定位的对应关系。',
+     updated='2026-10-18')
 
 dept('director', 'film-directing', '导演',
      '把剧本、世界书和人物档案转为导演阐述、场面调度、表演及视听要求；用于导演定调、单场指导和创作审阅。',
@@ -85,8 +93,8 @@ dept('director', 'film-directing', '导演',
      '先将有效定调交编剧、美术、摄影、妆发、服装、动作与录音；分镜以此形成镜头方案。表演调度纳入导演职责，特效接口由动作／美术／摄影分别说明，本版不额外扩展岗位数量。')
 
 dept('design', 'film-production-design-portable', '美术指导',
-     '依据世界设定和导演意图建立影视空间、色材、陈设与道具的整体美术方案；用于视觉开发、场景统筹和美术交接。',
-     '负责视觉世界和美术部门统合，包括场景、陈设、戏用道具、标识及与妆服的视觉接口。输出设计意图与制作需求，施工、结构和真实预算须由相应人员依据现场条件深化。',
+     '依据世界设定和导演意图建立影视空间、色材与视觉口径；用于视觉开发、场景统筹和美术交接。统合不等于代做置景或戏用。含结构、陈设、戏用硬分界，空间类型举一反三，以及群审交付。',
+     '负责视觉世界和美术部门统合，包括场景、陈设、戏用道具、标识及与妆服的视觉接口。输出设计意图与制作需求，施工、结构和真实预算须由相应人员依据现场条件深化。统合指口径、任务分解与验收，不代替置景施工图、陈设摆场清单或戏用连续性台账。置景执行见「置景师 Skill」（13-置景师-Skill.md）；道具与陈设执行见「道具师 Skill」（12-道具师-Skill.md）。禁止把这两岗并回本文件。',
      '世界书与人物档案、导演定调、场景目录及剧本证据；已有勘景、平面、尺寸、时代地域资料、预算与工期。时代／地域未确定时先做候选，不发明确定历史事实。',
      '''1. 按世界规则、人物处境和戏剧行动建立视觉约束表。区分剧本明确物件、导演采纳的创作要求与美术新增建议，不把气氛参考中的所有物件列成必需道具。
 2. 提出空间层级、色彩、材质、光源外观、磨损与生活痕迹规则。每条说明服务哪类人物／场景，不能仅用参考影片名称代替可执行描述。
@@ -100,8 +108,9 @@ dept('design', 'film-production-design-portable', '美术指导',
 | 场景／资产编号 | 剧本依据或创作来源 | 设计目的【分析】 | 空间／色材要求 | 行动与机位接口 | 起止状态／复位 | 制作方式与待测项 | 采纳状态 |
 |---|---|---|---|---|---|---|---|
 | 沿用项目编号 | 明确事实或建议 | 指向场次表达 | 概念尺寸不得冒充实测 | 通路、遮挡、取放 | 按故事时序 | 区分设计与工程 | 有版本可追溯 |''',
-     '空间出入口和行动路径连贯；关键道具不会只存在于文字而缺空间位置；图文使用同一版本；场景风格有项目依据；推测物件未变成采购事实；未把待核尺寸当施工尺寸。',
-     '向摄影／分镜交空间关系及关键资产，向灯光交景内灯具和可安装条件，向动作交可移动／破坏／替身道具需求，向置景道具人员交待深化清单。空间或关键物件变化须通知受影响镜头。')
+     '空间出入口和行动路径连贯；关键道具不会只存在于文字而缺空间位置；图文使用同一版本；场景风格有项目依据；推测物件未变成采购事实；未把待核尺寸当施工尺寸。结构、陈设、戏用未串岗；「负责岗位」非空套话；空间类型已按举一反三列出骨架层级或标「空间逻辑待考」；未把置景施工或戏用台账并入本岗正文。',
+     '向摄影／分镜交空间关系及关键资产，向灯光交景内灯具和可安装条件，向动作交可移动／破坏／替身道具需求，向置景与道具岗位交待深化清单，不代替其填写执行表。空间或关键物件变化须通知受影响镜头。置景正文以置景师 Skill 为准，道具与陈设执行以道具师 Skill 为准。',
+     updated='2026-10-18')
 
 dept('camera', 'film-cinematography', '摄影指导',
      '把导演意图与场景条件转为镜头、构图、运动、曝光和影像测试方案；用于摄影阐述、场次覆盖与分镜协作。',
@@ -240,30 +249,73 @@ dept('storyboard', 'film-storyboarding', '分镜师',
      '文案和线稿逐镜对应；关键行动与信息出现顺序清楚；无无意越轴、跳轴或视线错误；人物、妆服和道具状态符合当前版本；估算时长非实测；实际文件存在且状态真实；纯提示词或文字分镜不能通过图文故事板验收。',
      '向导演交叙事和节奏选择，向摄影交镜头覆盖及机位关系，向美术／灯光／妆服／动作／录音交逐镜约束。收到部门不可行反馈时保留表达目的、比较替代镜头，更新关联图文并保留变更记录。')
 
-def books_for(d):
-    return REVIEW['director_books'] if d['key'] == 'director' else REFERENCES[d['key']]['books']
+import skill_addenda as addenda
 
-def render(d):
-    books = books_for(d)
-    assert len(books) == 2
-    sources = '\n\n'.join(
-        f"### B{i}. {b['title']}\n\n- 作者：{b['author']}\n- 所核版本：{b['edition']}\n"
-        f"- 选取方向：{b['focus']}\n- 资料深度：{b['access']}\n"
-        f"- [合法书目／公开资料入口]({b['url']})"
-        for i, b in enumerate(books, 1)
-    )
+for _d in DEPTS:
+    if _d['key'] in addenda.EXTRAS:
+        _d['extra'] = addenda.EXTRAS[_d['key']]
+for _spec in addenda.NEW_DEPTS:
+    dept(**_spec)
+
+BOOK_RE = re.compile(
+    r'### B\d+\. (.+)\n\n- 作者：(.+)\n- 所核版本：(.+)\n- 选取方向：(.+)\n'
+    r'- 资料深度：(.+)\n- \[合法书目／公开资料入口\]\((.+?)\)'
+)
+
+def parse_books(text):
+    books = []
+    for m in BOOK_RE.finditer(text):
+        books.append(dict(title=m.group(1), author=m.group(2), edition=m.group(3),
+                          focus=m.group(4), access=m.group(5), url=m.group(6)))
+    return books
+
+def resolve_books(d, review, parsed):
+    if d.get('sources_md'):
+        return []
+    if review:
+        if d['key'] == 'director':
+            return review['director_books']
+        refs = {r['id']: r for r in review['roles']}
+        return refs[d['key']]['books']
+    books = parsed.get(d['slug'])
+    if not books or len(books) != 2:
+        raise SystemExit(f'missing books for {d["slug"]}')
+    return books
+
+def render(d, books):
+    version = d.get('version', '1.0.0')
+    updated = d.get('updated', '2026-10-03')
+    extra = (d.get('extra') or '').strip()
+    extra_block = f'{extra}\n\n' if extra else ''
+    if d.get('sources_md'):
+        source_rule = d['sources_md'].strip() + '\n'
+        sources = ''
+        after_sources = ''
+        call_lead = ''
+    else:
+        if len(books) != 2:
+            raise SystemExit(f'{d["slug"]} needs two books')
+        sources = '\n\n'.join(
+            f"### B{i}. {b['title']}\n\n- 作者：{b['author']}\n- 所核版本：{b['edition']}\n"
+            f"- 选取方向：{b['focus']}\n- 资料深度：{b['access']}\n"
+            f"- [合法书目／公开资料入口]({b['url']})"
+            for i, b in enumerate(books, 1)
+        )
+        source_rule = SOURCE_RULE
+        after_sources = '\n'
+        call_lead = '\n'
     return f'''---
 name: {d['slug']}
 description: {d['description']}
 metadata:
-  version: "1.0.0"
+  version: "{version}"
   language: "zh-CN"
-  updated: "2026-10-03"
+  updated: "{updated}"
 ---
 
 # {d['title']} Skill · 通用独立版
 
-版本 1.0.0。适用范围：电影、剧集及短片；项目内容每次另行提供。身份：本项目编制的岗位协作指令，不是专业人员的真实执业身份或质量认证。
+版本 {version}。适用范围：电影、剧集及短片；项目内容每次另行提供。身份：本项目编制的岗位协作指令，不是专业人员的真实执业身份或质量认证。
 
 ## 岗位职责
 
@@ -294,19 +346,27 @@ metadata:
 
 返工记录写明“变更来源—旧版／新版—受影响场次／人物／资产／镜头—待重审岗位”。不得把本次未修改的已确认内容全部作废；也不得把旧输出冒充已按新设定重算。
 
-{SOURCE_RULE}
-{sources}
-
-## 调用示例
+{extra_block}{source_rule}
+{sources}{after_sources}{call_lead}## 调用示例
 
 “请使用本 Skill，对我提供的有效剧本片段、世界书、人物档案及导演方案，完成指定场次的{d['title']}方案。先核对版本与缺口，保留原文依据，把分析与未决项分开，并交付本岗位对应成果。保密资料按本地／脱敏授权范围处理。”
 '''
 
 def main():
     rows = []
+    review = load_review()
+    parsed = {}
+    if review is None:
+        for d in DEPTS:
+            if d.get('sources_md'):
+                continue
+            existing = OUT / 'skills' / d['slug'] / 'SKILL.md'
+            parsed[d['slug']] = parse_books(existing.read_text(encoding='utf-8'))
     OUT.mkdir(parents=True, exist_ok=True)
+    results = []
     for index, d in enumerate(DEPTS, 1):
-        content = render(d)
+        books = resolve_books(d, review, parsed)
+        content = render(d, books)
         folder = OUT / 'skills' / d['slug']
         folder.mkdir(parents=True, exist_ok=True)
         standard = folder / 'SKILL.md'
@@ -317,15 +377,29 @@ def main():
         package = OUT / f'{index:02d}-{simple_title}-Skill.zip'
         with zipfile.ZipFile(package, 'w', zipfile.ZIP_DEFLATED) as z:
             z.write(standard, f'{d["slug"]}/SKILL.md')
+        raw = standard.read_bytes()
+        with zipfile.ZipFile(package) as z:
+            zipped = z.read(f'{d["slug"]}/SKILL.md')
+        identical = download.read_bytes() == raw
+        results.append(dict(
+            role=d['title'],
+            format='Skill is valid!' if content.startswith('---\nname:') and '## 岗位职责' in content and '## 调用示例' in content else 'invalid',
+            identical_copies=identical,
+            zip_readback=zipped == raw,
+            bytes=len(raw),
+            lines=raw.count(b'\n'),
+        ))
         rows.append(dict(role=d['title'], skill=d['slug'], markdown=download.name,
-                         zip=package.name, sha256=hashlib.sha256(standard.read_bytes()).hexdigest(),
-                         books=[b['title'] for b in books_for(d)]))
+                         zip=package.name, sha256=hashlib.sha256(raw).hexdigest(),
+                         books=[b['title'] for b in books]))
 
-    guide = '''# 10 个部门 Skill · 跨平台使用说明
+    guide = '''# 13 个部门 Skill · 跨平台使用说明
 
-版本：1.0.0；编制日期：2026-10-03。
+版本：1.1.0；编制日期：2026-10-03；增量：2026-10-18。
 
-本包包含编剧、导演、美术指导、摄影指导、灯光指导、造型指导（妆发）、动作指导、录音指导、服装指导、分镜师。每岗两本核心专业书，书目与访问深度直接写在各自文件内。每份自包含，无其他文件或工具的强制依赖。
+本包包含编剧、导演、美术指导、摄影指导、灯光指导、造型指导（妆发）、动作指导、录音指导、服装指导、分镜师、统筹、道具师、置景师。编剧至分镜师每岗两本核心专业书，书目与访问深度直接写在各自文件内。统筹、道具师、置景师不另列未通读的核心书，公开岗位描述入口写在各文件内。每份自包含，无其他文件或工具的强制依赖。
+
+2026-10-18 增量：新增统筹、道具师、置景师三份独立技能。编剧与美术指导保留原有职责、方法、交付和书目，并追加岗界、群审交付和空间类型举一反三。美术指导只保留口径和验收，置景执行以置景师 Skill 为准，道具与陈设执行以道具师 Skill 为准。统筹主验全剧接戏三链（R-CONT-FULL）：物件／情感、空间结构、场景；断链标红。人物档案中的「云中蛟」不得写成「云中鹤」。
 
 ## 选择使用方式
 
@@ -337,33 +411,54 @@ def main():
 
 ## 工作顺序
 
-有效剧本依据 → 最新世界书与人物档案 → 编剧／导演创作审阅与导演定调 → 美术、摄影、灯光、妆发、动作、录音、服装方案 → 分镜及跨部门迭代 → 确认后的制作交接。
+有效剧本依据 → 最新世界书与人物档案 → 编剧／导演创作审阅与导演定调 → 统筹拆场，并按 R-CONT-FULL 主验三条接戏链 → 美术口径 → 置景与道具落地 → 摄影、灯光、妆发、动作、录音、服装方案 → 分镜及跨部门迭代 → 确认后的制作交接。
 
-这是依赖关系，不要求所有部门逐个串行等待。现有已确认素材可以复用；未决问题只阻止受影响部分定案。编剧／导演提出设定修订时先形成草案，采纳后再更新下游版本。
+这是依赖关系，不要求所有部门逐个串行等待。现有已确认素材可以复用；未决问题只阻止受影响部分定案。编剧／导演提出设定修订时先形成草案，采纳后再更新下游版本。统筹标红的断链退回对应岗位，不在统筹表里改写邻岗细表。
 
 ## 使用边界与资料状态
 
 这些是可执行的文字工作指令，不自带图像模型、绘图程序、专业设备或软件连接。分镜 Skill 要求文案与线稿对应，并区分实际图像、仅源码和待补图；平台能力不足时必须如实报告。
 
-书目已核简介／目录或部分公开节选，具体访问状态见每份文件。流程为本项目编制，尚未完成两本书逐章深读与方法校核。不得把书目列入等同于通读全文，也不得编造章节出处。
+原十岗书目已核简介／目录或部分公开节选，具体访问状态见每份文件。流程为本项目编制，尚未完成这些书的逐章深读与方法校核。不得把书目列入等同于通读全文，也不得编造章节出处。新增三岗的链接是岗位描述入口，不是已通读的核心书。
 
 跨平台迁移 Skill 不等于授权上传保密项目；真实剧本默认本地，云端只用明确获准的脱敏素材。此包不自动安装、不改动片场协作的原有技能或数据库；其他平台兼容性须在目标平台导入后确认。
+
+空间类型举一反三是永久口径：商船、衙门只是举例。剧本点到的府宅、皇宫／大殿／议政厅、码头／街市以及其他类型，都先定类型母题，再推必有骨架和必有陈设；缺来源标待考，禁止空塞。项目时代为明代时依据可定位的明代史实，其他时代改按其世界书。
 
 ## 文件目录
 
 '''
     guide += '\n'.join(f"- {r['role']}：`{r['markdown']}` 或 `{r['zip']}`" for r in rows) + '\n'
     (OUT / '使用说明.txt').write_text(guide, encoding='utf-8')
-    (OUT / '文件清单.json').write_text(json.dumps(dict(version='1.0.0', roles=rows), ensure_ascii=False, indent=2), encoding='utf-8')
-    with zipfile.ZipFile(OUT / '10个部门Skills-通用版-v1.0.zip', 'w', zipfile.ZIP_DEFLATED) as z:
+    (OUT / 'README.md').write_text(guide, encoding='utf-8')
+    manifest = dict(version='1.1.0', updated='2026-10-18', roles=rows)
+    (OUT / '文件清单.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    bundle_name = '13个部门Skills-通用版-v1.1.zip'
+    bundle_path = OUT / bundle_name
+    with zipfile.ZipFile(bundle_path, 'w', zipfile.ZIP_DEFLATED) as z:
         for r in rows:
             z.write(OUT / r['markdown'], '单文件版/' + r['markdown'])
             src = OUT / 'skills' / r['skill'] / 'SKILL.md'
             z.write(src, 'skills/' + r['skill'] + '/SKILL.md')
-        for filename in ['使用说明.txt', '文件清单.json']:
+        for filename in ['使用说明.txt', '文件清单.json', 'README.md']:
             z.write(OUT / filename, filename)
-    print(json.dumps(dict(roles=len(rows), core_books=sum(len(r['books']) for r in rows),
-                          package=str(OUT / '10个部门Skills-通用版-v1.0.zip')), ensure_ascii=False))
+    with zipfile.ZipFile(bundle_path) as z:
+        bundle_ok = all(name in z.namelist() for name in ['使用说明.txt', '文件清单.json', 'README.md'])
+        bundle_count = len(z.namelist())
+    record = dict(
+        role_count=len(results),
+        core_book_count=sum(len(r['books']) for r in rows),
+        results=results,
+        bundle_readback=bundle_ok,
+        bundle_files=bundle_count,
+        target_platform_execution='未执行；只验证技能正文结构、文件一致性和压缩包回读',
+        source_depth='原十岗为书目／公开简介及部分节选，未通读全部参考书。统筹、道具师、置景师无核心书，只列公开岗位描述入口',
+        increment='2026-10-18 新增统筹、道具师、置景师；编剧与美术指导追加硬分界、群审交付、空间类型举一反三。统筹含 R-CONT-FULL 三链',
+    )
+    (OUT / '校验记录.json').write_text(json.dumps(record, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    print(json.dumps(dict(roles=len(rows), core_books=record['core_book_count'],
+                          identical=all(r['identical_copies'] and r['zip_readback'] for r in results),
+                          package=str(bundle_path)), ensure_ascii=False))
 
 if __name__ == '__main__':
     main()
